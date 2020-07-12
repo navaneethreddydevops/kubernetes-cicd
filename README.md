@@ -293,3 +293,16 @@ helm uninstall smiling-penguin
 helm status smiling-penguin
 helm get -h
 ```
+
+### Installing Prometheus Kibana Nodeecporter 
+```
+
+
+```
+### Installing Datadog
+```
+
+```
+### Installing ELK
+```
+```
