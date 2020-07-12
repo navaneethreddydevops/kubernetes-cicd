@@ -167,6 +167,82 @@ kubectl get events --sort-by=.metadata.creationTimestamp
 ```
 kubectl diff -f ./my-manifest.yaml
 ```
+### Patching Resources 
+
+```
+# Partially update a node
+kubectl patch node k8s-node-1 -p '{"spec":{"unschedulable":true}}'
+
+# Update a container's image; spec.containers[*].name is required because it's a merge key
+kubectl patch pod valid-pod -p '{"spec":{"containers":[{"name":"kubernetes-serve-hostname","image":"new image"}]}}'
+
+# Update a container's image using a json patch with positional arrays
+kubectl patch pod valid-pod --type='json' -p='[{"op": "replace", "path": "/spec/containers/0/image", "value":"new image"}]'
+
+# Disable a deployment livenessProbe using a json patch with positional arrays
+kubectl patch deployment valid-deployment  --type json   -p='[{"op": "remove", "path": "/spec/template/spec/containers/0/livenessProbe"}]'
+
+# Add a new element to a positional array
+kubectl patch sa default --type='json' -p='[{"op": "add", "path": "/secrets/1", "value": {"name": "whatever" } }]'
+```
+### Scaling Resources 
+
+```
+kubectl scale --replicas=3 rs/foo                                 # Scale a replicaset named 'foo' to 3
+kubectl scale --replicas=3 -f foo.yaml                            # Scale a resource specified in "foo.yaml" to 3
+kubectl scale --current-replicas=2 --replicas=3 deployment/mysql  # If the deployment named mysql's current size is 2, scale mysql to 3
+kubectl scale --replicas=5 rc/foo rc/bar rc/baz                   # Scale multiple replication controllers
+```
+### Deleting Resources
+
+```
+kubectl delete -f ./pod.json                                              # Delete a pod using the type and name specified in pod.json
+kubectl delete pod,service baz foo                                        # Delete pods and services with same names "baz" and "foo"
+kubectl delete pods,services -l name=myLabel                              # Delete pods and services with label name=myLabel
+kubectl -n my-ns delete pod,svc --all                                      # Delete all pods and services in namespace my-ns,
+# Delete all pods matching the awk pattern1 or pattern2
+kubectl get pods  -n mynamespace --no-headers=true | awk '/pattern1|pattern2/{print $1}' | xargs  kubectl delete -n mynamespace pod
+```
+
+### Interacting with running Pods
+
+```
+kubectl logs my-pod                                 # dump pod logs (stdout)
+kubectl logs -l name=myLabel                        # dump pod logs, with label name=myLabel (stdout)
+kubectl logs my-pod --previous                      # dump pod logs (stdout) for a previous instantiation of a container
+kubectl logs my-pod -c my-container                 # dump pod container logs (stdout, multi-container case)
+kubectl logs -l name=myLabel -c my-container        # dump pod logs, with label name=myLabel (stdout)
+kubectl logs my-pod -c my-container --previous      # dump pod container logs (stdout, multi-container case) for a previous instantiation of a container
+kubectl logs -f my-pod                              # stream pod logs (stdout)
+kubectl logs -f my-pod -c my-container              # stream pod container logs (stdout, multi-container case)
+kubectl logs -f -l name=myLabel --all-containers    # stream all pods logs with label name=myLabel (stdout)
+kubectl run -i --tty busybox --image=busybox -- sh  # Run pod as interactive shell
+kubectl run nginx --image=nginx -n 
+mynamespace                                         # Run pod nginx in a specific namespace
+kubectl run nginx --image=nginx                     # Run pod nginx and write its spec into a file called pod.yaml
+--dry-run=client -o yaml > pod.yaml
+
+kubectl attach my-pod -i                            # Attach to Running Container
+kubectl port-forward my-pod 5000:6000               # Listen on port 5000 on the local machine and forward to port 6000 on my-pod
+kubectl exec my-pod -- ls /                         # Run command in existing pod (1 container case)
+kubectl exec my-pod -c my-container -- ls /         # Run command in existing pod (multi-container case)
+kubectl top pod POD_NAME --containers               # Show metrics for a given pod and its containers
+```
+### Interacting with Nodes and Cluster
+
+```
+kubectl cordon my-node                                                # Mark my-node as unschedulable
+kubectl drain my-node                                                 # Drain my-node in preparation for maintenance
+kubectl uncordon my-node                                              # Mark my-node as schedulable
+kubectl top node my-node                                              # Show metrics for a given node
+kubectl cluster-info                                                  # Display addresses of the master and services
+kubectl cluster-info dump                                             # Dump current cluster state to stdout
+kubectl cluster-info dump --output-directory=/path/to/cluster-state   # Dump current cluster state to /path/to/cluster-state
+
+# If a taint with that key and effect already exists, its value is replaced as specified.
+kubectl taint nodes foo dedicated=special-user:NoSchedule
+```
+
 
 ### Updating Resources
 ```
@@ -194,3 +270,14 @@ kubectl annotate pods my-pod icon-url=http://goo.gl/XXBTWq       # Add an annota
 kubectl autoscale deployment foo --min=2 --max=10                # Auto scale a deployment "foo"
 ```
 
+### Resource types
+
+```
+kubectl api-resources
+kubectl api-resources --namespaced=true      # All namespaced resources
+kubectl api-resources --namespaced=false     # All non-namespaced resources
+kubectl api-resources -o name                # All resources with simple output (just the resource name)
+kubectl api-resources -o wide                # All resources with expanded (aka "wide") output
+kubectl api-resources --verbs=list,get       # All resources that support the "list" and "get" request verbs
+kubectl api-resources --api-group=extensions # All resources in the "extensions" API group
+```
