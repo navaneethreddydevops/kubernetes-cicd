@@ -28,6 +28,7 @@ Kube-Schudeler
 Kubelet 
 Kubeproxy
     Networking in Kubernetes
+    Loadbalancing
 Exposes port 10255 to report back to master
 Container Engine
 
