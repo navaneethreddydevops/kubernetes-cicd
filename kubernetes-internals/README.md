@@ -23,3 +23,13 @@ Kube-Schudeler
  Resources(CPU,MEMORY)
 
 
+## Node
+
+Kubelet 
+Kubeproxy
+    Networking in Kubernetes
+Exposes port 10255 to report back to master
+Container Engine
+
+
+
