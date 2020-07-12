@@ -281,3 +281,15 @@ kubectl api-resources -o wide                # All resources with expanded (aka 
 kubectl api-resources --verbs=list,get       # All resources that support the "list" and "get" request verbs
 kubectl api-resources --api-group=extensions # All resources in the "extensions" API group
 ```
+
+### Helm Package Manager
+
+```
+helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+helm search repo stable
+helm repo update              # Make sure we get the latest list of charts
+helm install stable/mysql --generate-name
+helm uninstall smiling-penguin
+helm status smiling-penguin
+helm get -h
+```
