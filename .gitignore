@@ -127,3 +127,16 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+pythonenv3.8/lib64
+pythonenv3.8/pyvenv.cfg
+pythonenv3.8/bin/activate.csh
+pythonenv3.8/bin/activate
+pythonenv3.8/bin/easy_install-3.8
+pythonenv3.8/bin/pip
+pythonenv3.8/bin/pip3.8
+pythonenv3.8/bin/pip3
+pythonenv3.8/bin/python3
+pythonenv3.8/bin/activate.fish
+pythonenv3.8/bin/Activate.ps1
+pythonenv3.8/bin/easy_install
+pythonenv3.8/bin/python
